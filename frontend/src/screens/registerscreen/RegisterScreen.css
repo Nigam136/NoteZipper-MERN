@@ -1,0 +1,13 @@
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+}
+
+#btn {
+  margin-top: 20px;
+}
+
+#input {
+  margin-top: 10px;
+}
