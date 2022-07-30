@@ -1,24 +1,41 @@
 const express = require("express");
 const notes = require("./data/notes");
-const dotenv = require("dotenv");
+const env = require("dotenv");
+const connectDB = require("./config/DB");
+const userRoutes = require("./routes/userRoutes");
+const noteRoutes = require("./routes/noteRoutes");
+const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
+const path = require("path");
 
 //object for express
 const app = express();
-dotenv.config();
+env.config();
+connectDB();
+app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+//api for users and notes
+app.use("/api/users", userRoutes);
+app.use("/api/notes", noteRoutes);
+app.use(errorHandler);
+app.use(notFound);
 
-app.get("/api/notes", (req, res) => {
-  res.send(notes);
-});
+//------------------deployement----------------
+__dirname = path.resolve();
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-app.get("/api/notes/:id", (req, res) => {
-  const note = notes.find((n) => n._id === req.params.id);
-  res.send(note);
-});
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  });
+} else {
+  // general api
+  app.get("/", (req, res) => {
+    res.send("API is running.......");
+  });
+}
 
-const PORT = process.env.PORT || 3000;
+//------------------deployement----------------
 
+//server and port
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`server started on PORT ${PORT}`));
