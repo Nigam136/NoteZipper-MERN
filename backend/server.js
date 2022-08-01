@@ -6,7 +6,6 @@ const userRoutes = require("./routes/userRoutes");
 const noteRoutes = require("./routes/noteRoutes");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 const path = require("path");
-
 //object for express
 const app = express();
 env.config();
@@ -16,8 +15,6 @@ app.use(express.json());
 //api for users and notes
 app.use("/api/users", userRoutes);
 app.use("/api/notes", noteRoutes);
-app.use(errorHandler);
-app.use(notFound);
 
 //------------------deployement----------------
 
@@ -37,6 +34,8 @@ if (process.env.NODE_ENV === "production") {
 
 //------------------deployement----------------
 
+app.use(errorHandler);
+app.use(notFound);
 //server and port
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`server started on PORT ${PORT}`));
